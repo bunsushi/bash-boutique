@@ -34,17 +34,62 @@ function displayStock() {
 
         for (var i = 0; i < res.length; i++) {
             var boutiqueArray = [];
-            boutiqueArray.push(res[i].id);
-            boutiqueArray.push(res[i].product_name);
-            boutiqueArray.push(res[i].category);
-            // Fix so reads to 2 decimals
-            boutiqueArray.push(res[i].price);
-            boutiqueArray.push(res[i].stock_quantity);
+            boutiqueArray.push(res[i].id, res[i].product_name, res[i].category, "$" + res[i].price, res[i].stock_quantity);
             table.push(boutiqueArray);
         }
 
         console.log(table.toString());
 
-        connection.end();
+        placeOrder();
+
+        // connection.end();
     });
-}
+};
+
+function placeOrder() {
+    connection.query("SELECT * FROM products", function (err, res) {
+        if (err) throw err;
+
+        inquirer
+            .prompt([
+                {
+                    name: "item",
+                    type: "list",
+                    pageSize: 11,
+                    choices: function () {
+                        var choiceArray = [];
+                        for (var i = 0; i < res.length; i++) {
+                            choiceArray.push(res[i].product_name);
+                        }
+                        return choiceArray;
+                    },
+                    message: "What item are you interested in?"
+                },
+                {
+                    name: "quantity",
+                    type: "input",
+                    message: "How many units would you like to purchase?"
+                }
+            ])
+            .then(function (answer) {
+                console.log(answer.item + " " + answer.quantity);
+
+                var chosenItem;
+                for (var i = 0; i < res.length; i++) {
+                    if (res[i].product_name === answer.item) {
+                        chosenItem = res[i];
+                    }
+                }
+
+                var total = (chosenItem.price * answer.quantity).toFixed(2);
+
+                if (answer.quantity <= chosenItem.stock_quantity) {
+                    console.log("Your total is: $" + total);
+                }
+                else {
+                    // Function: do you want to place another order?
+                    console.log("Woops! We don't have enough items to fulfill your order.");
+                }
+            });
+    });
+};
