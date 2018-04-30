@@ -29,7 +29,6 @@ function displayStock() {
 
         var table = new Table({
             head: ['ID', 'Product', 'Category', 'Price', 'Available']
-            //, colWidths: [100, 200]
         });
 
         for (var i = 0; i < res.length; i++) {
@@ -39,10 +38,7 @@ function displayStock() {
         }
 
         console.log(table.toString());
-
         placeOrder();
-
-        // connection.end();
     });
 };
 
@@ -95,17 +91,38 @@ function placeOrder() {
                                 id: chosenItem.id
                             }
                         ],
-                        function(error) {
+                        function (error) {
                             if (error) throw errow;
                             console.log("Your total is: $" + total);
-                            // Function: do you want to place another order?
+                            newOrder();
                         }
                     )
                 }
                 else {
-                    // Function: do you want to place another order?
                     console.log("Woops! We don't have enough items to fulfill your order.");
+                    newOrder();
                 }
             });
     });
 };
+
+function newOrder() {
+    inquirer
+        .prompt([
+            {
+                name: "new_order",
+                type: "confirm",
+                message: "Do you want to place another order?",
+                default: false
+            }
+        ])
+        .then(function (answer) {
+            if (answer.new_order) {
+                placeOrder();
+            }
+            else {
+                console.log("Thanks for shopping at Bash Boutique!");
+                connection.end();
+            }
+        })
+}
