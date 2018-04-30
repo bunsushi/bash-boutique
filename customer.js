@@ -34,7 +34,7 @@ function displayStock() {
 
         for (var i = 0; i < res.length; i++) {
             var boutiqueArray = [];
-            boutiqueArray.push(res[i].id, res[i].product_name, res[i].category, "$" + res[i].price, res[i].stock_quantity);
+            boutiqueArray.push(res[i].id, res[i].product_name, res[i].category, "$" + res[i].price.toFixed(2), res[i].stock_quantity);
             table.push(boutiqueArray);
         }
 
@@ -84,7 +84,23 @@ function placeOrder() {
                 var total = (chosenItem.price * answer.quantity).toFixed(2);
 
                 if (answer.quantity <= chosenItem.stock_quantity) {
-                    console.log("Your total is: $" + total);
+                    // update quantity in sql
+                    connection.query(
+                        "UPDATE products SET ? WHERE ?",
+                        [
+                            {
+                                stock_quantity: chosenItem.stock_quantity - answer.quantity
+                            },
+                            {
+                                id: chosenItem.id
+                            }
+                        ],
+                        function(error) {
+                            if (error) throw errow;
+                            console.log("Your total is: $" + total);
+                            // Function: do you want to place another order?
+                        }
+                    )
                 }
                 else {
                     // Function: do you want to place another order?
