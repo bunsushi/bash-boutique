@@ -2,6 +2,8 @@ var mysql = require('mysql');
 var inquirer = require('inquirer');
 var Table = require('cli-table');
 
+var orderTotal = 0;
+
 // create the connection information for the sql database
 var connection = mysql.createConnection({
     host: "localhost",
@@ -68,7 +70,6 @@ function placeOrder() {
                 }
             ])
             .then(function (answer) {
-                console.log(answer.item + " " + answer.quantity);
 
                 var chosenItem;
                 for (var i = 0; i < res.length; i++) {
@@ -93,13 +94,14 @@ function placeOrder() {
                         ],
                         function (error) {
                             if (error) throw errow;
-                            console.log("Your total is: $" + total);
+                            orderTotal += parseFloat(total);
+                            console.log("Your item total comes to: $" + total);
                             newOrder();
                         }
                     )
                 }
                 else {
-                    console.log("Woops! We don't have enough items to fulfill your order.");
+                    console.log("Oh no! We don't have enough items to fulfill your order.");
                     newOrder();
                 }
             });
@@ -121,7 +123,7 @@ function newOrder() {
                 placeOrder();
             }
             else {
-                console.log("Thanks for shopping at Bash Boutique!");
+                console.log("Thanks for shopping at Bash Boutique!\n\nYour order total comes to: $" + parseFloat(orderTotal).toFixed(2));
                 connection.end();
             }
         })
