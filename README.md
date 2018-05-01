@@ -37,6 +37,8 @@ You will then be presented with 4 options:
 
 After each action, you can return to this menu by typing `yes` or `enter`.
 
+![Manager Menu](/images/manager-menu.png)
+
 ### View Products for Sale
 
 This option brings up the product information (product ID number, product name, category, price, and available stock) for the entire store inventory.
@@ -52,6 +54,8 @@ This option allows you to add more units to a product in your inventory. You wil
 ### Add New Product
 
 This option allows you to create a new product and add it to your store inventory. You will be prompted to provide a product name, category, price, and initial stock quantity. Then Bash Boutique will display the product information with an automatically generated ID number.
+
+![New Product](/images/add-new-product.png)
 
 ## What's in the Box?
 
